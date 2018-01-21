@@ -4,10 +4,38 @@ const MongoClient = require('mongodb').MongoClient;
 
 var uri = "mongodb://RoenMidnight:RoenOwona@cluster0-shard-00-00-ho3uq.mongodb.net:27017,cluster0-shard-00-01-ho3uq.mongodb.net:27017,cluster0-shard-00-02-ho3uq.mongodb.net:27017/scrapingTeste?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
 
-var scrapingPT = {
+
+/**
+ * Cria a Collection que vai armazenar os dados
+ */
+MongoClient.connect(uri, function(err, db) {
     
+    if(err) throw err;
+    
+    let dbo = db.db('scrapingTeste');
+
+    dbo.createCollection("AllInformation", function(err, res) {
+        if (err) throw err;
+        console.log("Collection Criada");
+        db.close();
+    });
+    
+    db.close();
+});
+
+/**
+ * Classe scrapingPT 
+ */
+var scrapingPT = {
+
+    /**
+     * Objeto onde será armazenada a lista das páginas.
+     */    
     listaPaginas: [],
 
+    /**
+     * Função que irá acessar a página inicial e recuperar a lista com as páginas a serem percorridas.
+     */
     paginaInicial: function (){
         
         const options = {
@@ -33,11 +61,10 @@ var scrapingPT = {
                                           
                 for (i in this.listaPaginas){
                     if(this.listaPaginas[i] != 'http://br.transparencia.gov.br/tem/'){
-                        this.crawlingInMySkin(this.listaPaginas[i], 1);
+                        this.crawlingThroughPages(this.listaPaginas[i], 1);
                     }
                 }
                 
-                //console.log(this.listaPaginas);
                 return true;
             }
         )
@@ -56,7 +83,11 @@ var scrapingPT = {
             return result;
         }
 
-        //Limpa URL's e me retorna os links já preenchidos.
+        /**
+         * Limpa a URL e seta o ano de 2017.
+         * @param url 
+         * @return URL com o ano de 2017 em seu parametro.
+         */
         function setaParametros(url){
             url = url.replace('redirecionarParaPagina(\'','')
                 .replace('\' + getAnoExercicioSelecionado()','2017')                          
@@ -72,7 +103,14 @@ var scrapingPT = {
         
     },    
 
-    crawlingInMySkin: function(url,pagina){
+
+    /**
+     * Função que irá percorrer as diversas páginas.
+     * @param url URL atual que esta sendo percorrida.
+     * @param pagina Pagina atual que esta sendo percorrida.
+     * @return Retorna novamente a função de forma recursiva.
+     */
+    crawlingThroughPages: function(url,pagina){
 
         const options = {
             uri: 'http://www.portaldatransparencia.gov.br/'+url+'&Pagina='+pagina,
@@ -127,16 +165,22 @@ var scrapingPT = {
                     console.log('----------------------')
 
                     if (pagina < 5){
-                        return this.crawlingInMySkin(url, ++pagina);
+                        return this.crawlingThroughPages(url, ++pagina);
                     }
                 }       
                         
-                return true;
             }
         )
         .catch((err) =>{
             console.log(err);
     });
+
+        /**
+         * Função que irá tratar as informações da tabela afim de extrair dela suas informações.
+         * @param strTratar 
+         * @return Retorna um Objeto composto do texto cru e a URL da célula caso possua.
+         * @return Retorna o texto cru da célula.
+         */
 
         function trataString(strTratar){            
                         
