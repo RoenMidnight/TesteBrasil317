@@ -31,7 +31,7 @@ var ScrapingPT = {
     /**
      * Array onde será armazenada a lista das páginas.
      */    
-    listaPaginas: [],
+    listPages: [],
 
     /**
      * Função que irá acessar a página inicial e recuperar a lista com as páginas a serem percorridas.
@@ -51,17 +51,17 @@ var ScrapingPT = {
                 console.log("Carregando Lista de Links");
                                 
                 let array_index = index($('script')[1].children[0].data, 'redirecionarParaPagina(\'');
-                var strBody    = $('script')[1].children[0].data;
+                var str_body    = $('script')[1].children[0].data;
                 
                 for (i in array_index) {
-                        let aux = strBody.substring(array_index[i], array_index[i] + strBody.substring(array_index[i]).indexOf(');'))
+                        let aux = str_body.substring(array_index[i], array_index[i] + str_body.substring(array_index[i]).indexOf(');'))
                         
-                        this.listaPaginas.push(setParameters(aux));
+                        this.listPages.push(setParameters(aux));
                     };
                                           
-                for (i in this.listaPaginas){
-                    if(this.listaPaginas[i] != 'http://br.transparencia.gov.br/tem/'){
-                        this.crawlingThroughPages(this.listaPaginas[i], 1);
+                for (i in this.listPages){
+                    if(this.listPages[i] != 'http://br.transparencia.gov.br/tem/'){
+                        this.crawlingThroughPages(this.listPages[i], 1);
                     }
                 }
                 
