@@ -2,7 +2,7 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const MongoClient = require('mongodb').MongoClient;
 
-const uri = "mongodb://RoenMidnight:RoenOwona@cluster0-shard-00-00-ho3uq.mongodb.net:27017,cluster0-shard-00-01-ho3uq.mongodb.net:27017,cluster0-shard-00-02-ho3uq.mongodb.net:27017/scrapingTeste?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin"
+const uri = ""
 
 
 /**
